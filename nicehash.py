@@ -130,8 +130,6 @@ class Nicehash(object):
         return data
 
 
-
-
 def main():
     """Launcher for the app."""
     config = options.Options()
@@ -143,7 +141,6 @@ def main():
         print(app.stats_provider())
         sys.exit('Alphagriffin.com | 2017')
     return True
-
 
 if __name__ == '__main__':
     try:
