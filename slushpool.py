@@ -30,7 +30,7 @@ class Slushpool(object):
     def __init__(self, options=None):
         """Should be entry level here. Make it easy."""
         self.options = options
-        self.api = '1658580-9e3b5c9f69f3d4be9343a0b6182e81fc'
+        self.api = ' '
 
     def main(self):
         """Should be entry level here. Make it easy."""
