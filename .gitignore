@@ -1,1 +1,9 @@
+
+## YOUR PESONAL KEYS MAN
 config.yaml
+
+## .pyc files suck
+__pycache__
+*/__pycache__
+*.pyc
+*/*.pyc

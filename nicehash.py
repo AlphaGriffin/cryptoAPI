@@ -4,6 +4,7 @@
 import sys
 import urllib.request
 import json
+import options
 
 __author__ = "Eric Petersen @Ruckusist"
 __copyright__ = "Copyright 2017, The Alpha Griffin Project"
@@ -65,7 +66,7 @@ class Nicehash(object):
 
     def main(self):
         """Sanity check with your api keys and info."""
-        print(self.options)
+        # print(self.options)
         return True
 
     # Sellers Info
@@ -133,12 +134,13 @@ class Nicehash(object):
 
 def main():
     """Launcher for the app."""
-    app = Nicehash()
+    config = options.Options()
+    app = Nicehash(config)
 
     if app.main():
         # app.my_balance()
         # app.my_orders()
-        app.stats_provider()
+        print(app.stats_provider())
         sys.exit('Alphagriffin.com | 2017')
     return True
 
