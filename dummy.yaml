@@ -1,0 +1,34 @@
+########################################################
+#    Alphagriffin.com The pyDesk Project               #
+#      Config for pyDesk.                              #
+# ==================================================== #
+# Application: Python Key: value for options class.    #
+#   - options.key = value                              #
+########################################################
+
+verbose: True
+
+#//////| DATABASE |\\\\\\#
+redis_host: 'localhost'
+redis_pass: ' '
+trader_db: 3
+
+#//////| Poloniex |\\\\\\#
+poloniex_secret: ' '
+poloniex_api: ' '
+poloniex_dgb_addr: ' '
+
+#//////| Slushpool |\\\\\\#
+Slushpool_api: ' '
+
+#//////| DGB-SHA256d Mining pool |\\\\\\#
+blockfactory_api: ' '
+
+#//////| Mining Rental and Miner Stats |\\\\\\#
+nicehash_api_id: ' '
+nicehash_api: ' '
+nicehash_btc_addr: ' '
+
+#//////| APP |\\\\\\#
+start_on_boot: False
+background_color: 'Dark'
