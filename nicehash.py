@@ -63,7 +63,6 @@ class Nicehash(object):
             data = json.loads(url.read().decode('UTF-8'))
         print(data)
 
-
     def main(self):
         """Sanity check with your api keys and info."""
         # print(self.options)
