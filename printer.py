@@ -16,7 +16,7 @@ __author__ = "Eric Petersen @Ruckusist"
 __copyright__ = "Copyright 2017, The Alpha Griffin Project"
 __credits__ = ["Eric Petersen", "Shawn Wilson", "@alphagriffin"]
 __license__ = "***"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __maintainer__ = "Eric Petersen"
 __email__ = "ruckusist@alphagriffin.com"
 __status__ = "Beta"
@@ -28,7 +28,14 @@ class Printer(object):
     def __init__(self, options):
         """Probably dont need options but you never know."""
         self.options = options
-        self.res_x, self.res_y = self._get_terminal_size_windows() if not None else (0,0)
+        try:
+            self.res_x, self.res_y = self._get_terminal_size_windows() if not None else self.getTerminalSize()
+        except Exception as exp:
+            # cant know the screen size, might be visual studio or Jupyter
+            # use backup printer that doesnt need screen size
+
+            print("Failing to get screen size!")
+            pass
 
     def __call__(self, data=None):
         """Call this Class without any functions."""
@@ -39,12 +46,28 @@ class Printer(object):
         """Tie up those loose ends."""
         return str("AG_Printer Ver: {}".format(__version__))
 
+    def no_size_printer(self, data=None):
+        """Basic printer with no known size."""
+        border = self.options.border
+        filler = self.options.filler
+        spacer = self.options.spacer
+        blocker = self.options.blocker
+        # catch a blank line
+        if data is None:
+            data = spacer * int((70/len(self.options.spacer)))
+        msg = "{border}{0:{filler}^{size}}{border}".format(
+            data[:76], size=70, border=border, filler=filler
+            )
+        if self.options.verbose:
+            print(msg)
+        # return msg
+
     def printer(self, data=None):
         """Pretty recursive json printer, or line printer."""
-        border = '|-|'
-        filler = ' '
-        spacer = '----'
-        blocker = '    '
+        border = self.options.border
+        filler = self.options.filler
+        spacer = self.options.spacer
+        blocker = self.options.blocker
         scr_size = self.res_x-(len(border)*2)
         if data == None:
             print("{border}{0:{filler}^{size}}{border}".format(
@@ -114,7 +137,7 @@ class Printer(object):
                  maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
                 sizex = right - left + 1
                 sizey = bottom - top + 1
-                return sizex, sizey
+                return sizex -1, sizey
         except:
             # src: http://stackoverflow.com/questions/263890/how-do-i-find-the-width-height-of-a-terminal-window
             try:
@@ -124,6 +147,35 @@ class Printer(object):
             except:
                 pass
             pass
+
+    def getTerminalSize(self):
+        """Source: https://stackoverflow.com/questions/566746/how-to-get-linux-console-window-width-in-python"""
+        env = os.environ
+        def ioctl_GWINSZ(fd):
+            try:
+                import fcntl, termios, struct, os
+                cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ,
+            '1234'))
+            except:
+                return
+            return cr
+        cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
+        if not cr:
+            try:
+                fd = os.open(os.ctermid(), os.O_RDONLY)
+                cr = ioctl_GWINSZ(fd)
+                os.close(fd)
+            except:
+                pass
+        if not cr:
+            cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
+
+            ### Use get(key[, default]) instead of a try/catch
+            #try:
+            #    cr = (env['LINES'], env['COLUMNS'])
+            #except:
+            #    cr = (25, 80)
+        return int(cr[1]), int(cr[0])
 
 
 def main():

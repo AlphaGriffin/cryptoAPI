@@ -1,6 +1,7 @@
 
 ## YOUR PESONAL KEYS MAN
 config.yaml
+client_secret.json
 
 ## .pyc files suck
 __pycache__
