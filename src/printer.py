@@ -10,13 +10,13 @@ import struct
 import platform
 import subprocess
 import json
-import options
+# import options
 
 __author__ = "Eric Petersen @Ruckusist"
 __copyright__ = "Copyright 2017, The Alpha Griffin Project"
 __credits__ = ["Eric Petersen", "Shawn Wilson", "@alphagriffin"]
 __license__ = "***"
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __maintainer__ = "Eric Petersen"
 __email__ = "ruckusist@alphagriffin.com"
 __status__ = "Beta"
@@ -25,9 +25,14 @@ __status__ = "Beta"
 class Printer(object):
     """A class that formats a cleaner CLI look."""
 
-    def __init__(self, options):
+    def __init__(self, options=None):
         """Probably dont need options but you never know."""
         self.options = options
+        if not self.options:
+            self.options.border = '|~|'
+            self.options.filler = ' '
+            self.options.spacer = ' |#|'
+            self.options.blocker = '    '
         try:
             self.res_x, self.res_y = self._get_terminal_size_windows() if not None else self.getTerminalSize()
         except Exception as exp:
@@ -197,6 +202,7 @@ def main():
 
 if __name__ == '__main__':
     try:
+        import options
         # os.system("mode con cols=80 lines=75")
         os.system("clear")
         main()

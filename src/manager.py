@@ -14,7 +14,7 @@ __status__ = "Beta"
 
 import os, sys, datetime, time, collections
 import ccxt
-import options
+
 
 
 class AssetManager(object):
@@ -52,47 +52,59 @@ class AssetManager(object):
         dataset[this_exchange]['app'] = exchange_connect
         exchange_connect.apiKey = eval("config.{}_api".format(this_exchange))
         exchange_connect.secret = eval("config.{}_secret".format(this_exchange))
-        balances = {}
+        balances = collections.defaultdict(dict)
         try:
             balance = exchange_connect.fetch_balance()
+            time.sleep(2)
         except:
             # print("{} is Offline".format(this_exchange))
             return
         for x in balance['total']:
             if float(balance['total'][x]) > 0:
-                balances[x] = balance['total'][x]
+                balances[x]['bal'] = balance['total'][x]
                 try:
-                    dataset['coins'][x] += '{}, '.format(this_exchange)
-                except:
-                    dataset['coins'][x] = '{}, '.format(this_exchange)
+                    try:
+                        pair = '{}/BTC'.format(x)
+                        ticker = exchange_connect.fetch_ticker(pair)
+                        time.sleep(2)
+                    except:
+                        pair = '{}/USDT'.format(x)
+                        ticker = exchange_connect.fetch_ticker(pair)
+                        time.sleep(2)
+                    balances[x]['pair'] = pair
+                    balances[x]['high'] = ticker['high']
+                    balances[x]['low'] = ticker['low']
+                    balances[x]['last'] = ticker['last']
+                    balances[x]['change'] = ticker['change']
+                except Exception as e:
+                    print(repr(e))
+
+                    print("{} is not responding".format(x))
+
         dataset[this_exchange]['balances'] = balances
-        # get the ticker
-        try:
-            ticker = exchange_connect.fetch_tickers()
-            dataset[this_exchange]['ticker'] = ticker
-        except Exception as e:
-            dataset[this_exchange]['ticker'] = None
-        return exchange_connect
+        return exchange_connect, balances
 
     def get_balances(self, dataset):
         """Create Subset of Master Balance."""
         balances = {}
         for x in dataset:
             if 'coins' not in x:
-                # print("Checking Balance on {}".format(str(x).upper()))
-                try:
-                    for i in dataset[x]['balances']:
-                        try:
-                            balances[i] += float(dataset[x]['balances'][i])
-                        except:
-                            balances[i] = float(dataset[x]['balances'][i])
-                except:
-                    # print("Exchange: {} shows no balance!".format(x))
-                    pass
+                if 'BTC' not in x:
+                    # print("Checking Balance on {}".format(str(x).upper()))
+                    try:
+                        for i in dataset[x]['balances']:
+                            try:
+                                balances[i] += float(dataset[x]['balances'][i])
+                            except:
+                                balances[i] = float(dataset[x]['balances'][i])
+                    except:
+                        print("Exchange: {} shows no balance!".format(x))
+                        pass
         return balances
 
 def main():
     """Launcher for the app."""
+
     config = options.Options()
     app = AssetManager(config)
 
@@ -102,6 +114,7 @@ def main():
 
 if __name__ == '__main__':
     try:
+        import options
         main()
     except Exception as e:
         print("and thats okay too.")
