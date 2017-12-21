@@ -2,6 +2,9 @@
 Processes for Properly gathering and displaying
 Crypto assets.
 """
+import os, sys, datetime, time, collections
+import ccxt
+
 
 __author__ = "Eric Petersen @Ruckusist"
 __copyright__ = "Copyright 2017, The Alpha Griffin Project"
@@ -12,18 +15,13 @@ __maintainer__ = "Eric Petersen"
 __email__ = "ruckusist@alphagriffin.com"
 __status__ = "Beta"
 
-import os, sys, datetime, time, collections
-import ccxt
-
-
-
 class AssetManager(object):
     """Functions for getting at crypto Assets"""
 
     def __init__(self, options=None):
         self.options = options
         self.my_exchanges = [
-                 'binance',
+                 # 'binance',
                  'poloniex',
                  'cryptopia',
                  'hitbtc',
@@ -90,16 +88,17 @@ class AssetManager(object):
         for x in dataset:
             if 'coins' not in x:
                 if 'BTC' not in x:
-                    # print("Checking Balance on {}".format(str(x).upper()))
-                    try:
-                        for i in dataset[x]['balances']:
-                            try:
-                                balances[i] += float(dataset[x]['balances'][i])
-                            except:
-                                balances[i] = float(dataset[x]['balances'][i])
-                    except:
-                        print("Exchange: {} shows no balance!".format(x))
-                        pass
+                    if 'USD' not in x or 'USDT' not in x:
+                        # print("Checking Balance on {}".format(str(x).upper()))
+                        try:
+                            for i in dataset[x]['balances']:
+                                try:
+                                    balances[i] += float(dataset[x]['balances'][i])
+                                except:
+                                    balances[i] = float(dataset[x]['balances'][i])
+                        except:
+                            print("Exchange: {} shows no balance!".format(x))
+                            pass
         return balances
 
 def main():

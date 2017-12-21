@@ -24,14 +24,16 @@ def program():
     # setup globals assets
     config = src.options.Options("../../access/access_codes.yaml")
     P = src.printer.Printer(config)  # .no_size_printer
+    # start program
+    P("| Cryptosheets | {}".format(datetime.datetime.now()))
     man = src.manager.AssetManager(config)
+    P("Logging into google.")
     C = src.sheets.gHooks(config).spreadsheet
 
     # setup placeholders
     dataset         = collections.defaultdict(dict)
 
-    # start program
-    P("| Cryptosheets | {}".format(datetime.datetime.now()))
+
     exchanges = []
     P("Setting up exchanges.")
     for exchange in man.my_exchanges:
@@ -40,12 +42,13 @@ def program():
         P("THIS EXCHANGE: {}".format(exchange))
         for coin in bals:
             bal = bals[coin]['bal']
-            last = bals[coin]['low']
-            high = bals[coin]['high']
-            low = bals[coin]['low']
-            pair = bals[coin]['pair']
-            change = bals[coin]['change']
-            P("{}: {}: {}: {}: {}".format(coin, bal, last, high, low))
+            #last = bals[coin]['last']
+            #high = bals[coin]['high']
+            #low = bals[coin]['low']
+            #pair = bals[coin]['pair']
+            #change = bals[coin]['change']
+            #P("{}: {}: {}: {}: {}".format(coin, bal, last, high, low))
+            P("{}: {}".format(coin, bal))
         sys.exit()
 
     P("Got exchanges.")
